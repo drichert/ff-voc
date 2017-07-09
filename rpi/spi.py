@@ -3,34 +3,16 @@ import time
 import boto3
 import json
 
+from sensors import *
+from transmitter import Transmitter
+
 with open("config.json") as f:
   config = json.load(f)
 
-db_client = boto3.client('dynamodb',
-  region_name=config["region"],
-  aws_access_key_id=config["aws_access_key_id"],
-  aws_secret_access_key=config["aws_secret_access_key"]
-)
-
-spi = spidev.SpiDev()
-spi.open(0, 0)
-
-def readadc():
-  r = spi.xfer([0xFF] * 4)
-
-  return int.from_bytes(r[0:2], byteorder='big')
-
 while True:
-  timestamp_ms = int(time.time() * 1000)
-
-  item = {
-    "sensor": { "S": "TGS2602" },
-    "ms": { "N": timestamp_ms },
-    "value": { "S": str(readadc()) }
-  }
-
-  print(item)
-
-  db_client.put_item(TableName=config["table"], Item=item)
+  Transmitter([
+    TG26202(0),
+    TG26202(1)
+  ])#.transmit()
 
   time.sleep(0.333)
