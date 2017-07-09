@@ -6,11 +6,6 @@ import json
 with open("config.json") as f:
   config = json.load(f)
 
-#db_client = boto3.client('dynamodb',
-#  region_name="us-east-2",
-#  aws_access_key_id="ABCDEFGHIJJ",
-#  aws_secret_access_key="asdfasdfasdfasdf"
-#)
 db_client = boto3.client('dynamodb',
   region_name=config["region"],
   aws_access_key_id=config["aws_access_key_id"],
@@ -30,12 +25,12 @@ while True:
 
   item = {
     "sensor": { "S": "TGS2602" },
-    "ms": { "S": str(timestamp_ms) },
+    "ms": { "N": timestamp_ms },
     "value": { "S": str(readadc()) }
   }
 
   print(item)
 
-  db_client.put_item(TableName="sensor-test-5", Item=item)
+  db_client.put_item(TableName=config["table"], Item=item)
 
   time.sleep(0.333)
