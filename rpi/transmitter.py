@@ -32,13 +32,13 @@ while True:
     v = values[i] = adc.read_adc(i)
 
     db_item = {
-      "sensor": { "N": i },
-      "ms": { "N": timestamp_ms },
-      "value": { "N": v }
+      "sensor": { "N": str(i + 1) },
+      "timestamp": { "N": str(timestamp_ms) },
+      "value": { "N": str(v) }
     }
 
     db_client.put_item(TableName=config["table"], Item=db_item)
 
   print(values)
 
-  time.sleep(0.333)
+  time.sleep(1)
