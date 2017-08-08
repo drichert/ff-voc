@@ -1,4 +1,5 @@
 #!/bin/bash
+# NOT NEEDED, USING SYSTEMD
 
 until $(python3 $HOME/app/transmitter.py); do
   echo "[CRASH] $(date)" >> $HOME/transmitter-crash.log
