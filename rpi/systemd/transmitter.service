@@ -1,0 +1,11 @@
+[Unit]
+Description=transmitter-service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/pi/app/transmitter.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
