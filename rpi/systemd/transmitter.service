@@ -3,8 +3,10 @@ Description=transmitter-service
 After=network.target
 
 [Service]
+User=pi
+WorkingDirectory=/home/pi/ff-voc
 Type=simple
-ExecStart=/usr/bin/python3 /home/pi/app/transmitter.py
+ExecStart=/usr/bin/python3 transmitter.py
 Restart=always
 
 [Install]

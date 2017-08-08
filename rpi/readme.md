@@ -5,10 +5,10 @@
 1. Create /home/pi/.ssh (700)
 2. Copy SSH pub key to `~/.ssh/authorize_keys`
 
-## Install rsync
+## Install deps
 
 ```
-$ sudo apt-get install rsync
+$ sudo apt-get install rsync dnsutils
 ```
 
 ## Run transmitter app on startup
