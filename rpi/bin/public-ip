@@ -1,0 +1,6 @@
+#!/bin/bash
+
+public_ip=$(dig +short o-o.myaddr.l.google.com TXT @ns1.google.com +short \
+  |sed 's/"//g')
+
+echo $public_ip
