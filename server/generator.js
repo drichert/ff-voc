@@ -3,6 +3,10 @@ var glob = require("glob")
 var AWS = require("aws-sdk")
 
 class Generator {
+  static scale(input, max) {
+    return input / max
+  }
+
   constructor() {
     this.loadTexts()
   }
@@ -21,6 +25,31 @@ class Generator {
 
     this.texts = texts
   }
+
+  set inputs(vals) {
+    this._inputs = vals
+    this._output = this.generate()
+  }
+
+  get output {
+    return this._output
+  }
+
+  get textsIndex() {
+
+  }
+
+  scaleInputs() {
+    var that = this
+
+    this._inputs.map(input => {
+      return input / that.scale
+    })
+  }
+
+  //generate() {
+  //  return
+  //}
 }
 
 module.exports = Generator
