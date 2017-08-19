@@ -1,6 +1,5 @@
-var fs = require("fs");
+var fs = require("fs")
 var glob = require("glob")
-var AWS = require("aws-sdk")
 
 class Generator {
   static scale(input, max) {
@@ -23,10 +22,10 @@ class Generator {
     let globPtn = __dirname + "/../share/*.txt"
     let paths = glob.sync(globPtn)
 
-    paths.forEach((path, i) => {
-      texts[i] = fs.readFileSync(path, {
+    paths.forEach((path) => {
+      texts.push(fs.readFileSync(path, {
         encoding: "utf8"
-      }).split(/(\s+)/)
+      }).split(/(\s+)/))
     })
 
     this.texts = texts
@@ -44,15 +43,17 @@ class Generator {
         return input / that.scale
       })
 
+      // Use input 3 (if present) to set index offset
+      let offset = inputs[3] ? Math.round(inputs[3] * 100) : 0
+
       // Pick text based on input 0
-      let textNdx = inputs[0] * that.scale
+      let textNdx = inputs[0] * that.scale + offset
       let text = that.texts[textNdx % that.texts.length]
 
       // Pick starting point based on input 1, and number of words
       // based on input 2
-      let wordNdx = Math.round(inputs[1] * text.length)
+      let wordNdx = (Math.round(inputs[1] * text.length) + offset) % text.length
       let numWords = Math.round(inputs[2] * that.maxWords)
-      //console.log(wordNdx, numWords, inputs[2], that.maxWords)
 
       let words = text.slice(wordNdx, wordNdx + numWords + 1)
       let phrase = words.join("")
@@ -64,25 +65,3 @@ class Generator {
 }
 
 module.exports = Generator
-
-//module.exports = (cbk) => {
-//  var texts = []
-//
-//  let globPtn = __dirname + "/../share/*.txt"
-//
-//  glob(globPtn, (err, files) => {
-//    files.forEach((f, i) => {
-//      fs.readFile(f, (err, data) => {
-//        if(err) console.log(err)
-//        else {
-//          // Preserve whitespace chunks
-//          texts[i] = data.toString().split(/(\s+)/)
-//        }
-//      })
-//    })
-//  })
-//
-//  let err = null
-//
-//  if(cbk) cbk(err, data)
-//}
