@@ -8,6 +8,12 @@ class Generator {
   }
 
   constructor() {
+    // Using 10-bit ADC, so we'll divide by 1024 to scale to float fraction
+    this.scale = 1024
+
+    // Max wods in output phrase
+    this.maxWords = 10
+
     this.loadTexts()
   }
 
@@ -26,30 +32,35 @@ class Generator {
     this.texts = texts
   }
 
-  set inputs(vals) {
-    this._inputs = vals
-    this._output = this.generate()
-  }
+  generate(inputs) {
+    if(inputs.length > 4) throw("Too many inputs (4 max)")
 
-  get output {
-    return this._output
-  }
-
-  get textsIndex() {
-
-  }
-
-  scaleInputs() {
     var that = this
 
-    this._inputs.map(input => {
-      return input / that.scale
+    return new Promise((resolve, reject) => {
+      var err = null
+
+      inputs = inputs.map(input => {
+        return input / that.scale
+      })
+
+      // Pick text based on input 0
+      let textNdx = inputs[0] * that.scale
+      let text = that.texts[textNdx % that.texts.length]
+
+      // Pick starting point based on input 1, and number of words
+      // based on input 2
+      let wordNdx = Math.round(inputs[1] * text.length)
+      let numWords = Math.round(inputs[2] * that.maxWords)
+      //console.log(wordNdx, numWords, inputs[2], that.maxWords)
+
+      let words = text.slice(wordNdx, wordNdx + numWords + 1)
+      let phrase = words.join("")
+
+      if(err) reject(err)
+      else resolve(phrase)
     })
   }
-
-  //generate() {
-  //  return
-  //}
 }
 
 module.exports = Generator
