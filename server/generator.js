@@ -36,31 +36,26 @@ class Generator {
 
     var that = this
 
-    return new Promise((resolve, reject) => {
-      var err = null
-
-      inputs = inputs.map(input => {
-        return input / that.scale
-      })
-
-      // Use input 3 (if present) to set index offset
-      let offset = inputs[3] ? Math.round(inputs[3] * 100) : 0
-
-      // Pick text based on input 0
-      let textNdx = inputs[0] * that.scale + offset
-      let text = that.texts[textNdx % that.texts.length]
-
-      // Pick starting point based on input 1, and number of words
-      // based on input 2
-      let wordNdx = (Math.round(inputs[1] * text.length) + offset) % text.length
-      let numWords = Math.round(inputs[2] * that.maxWords)
-
-      let words = text.slice(wordNdx, wordNdx + numWords + 1)
-      let phrase = words.join("")
-
-      if(err) reject(err)
-      else resolve(phrase)
+    inputs = inputs.map(input => {
+      return input / that.scale
     })
+
+    // Use input 3 (if present) to set index offset
+    let offset = inputs[3] ? Math.round(inputs[3] * 100) : 0
+
+    // Pick text based on input 0
+    let textNdx = inputs[0] * that.scale + offset
+    let text = that.texts[textNdx % that.texts.length]
+
+    // Pick starting point based on input 1, and number of words
+    // based on input 2
+    let wordNdx = (Math.round(inputs[1] * text.length) + offset) % text.length
+    let numWords = Math.round(inputs[2] * that.maxWords)
+
+    let words = text.slice(wordNdx, wordNdx + numWords + 1)
+    let phrase = words.join("")
+
+    return phrase
   }
 }
 
