@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "ff-voc-texts": "git+https://git@github.com/drichert/ff-voc-texts.git",
+    "glob": "^7.1.2"
+  }
+}
