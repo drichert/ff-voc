@@ -11,6 +11,7 @@ var sensorData = (time = moment()) => {
   // format used in database
   //if(!time) time = +new Date * 1000
   time = moment(time)
+  console.log(time.unix())
 
   var sensors = [1, 2, 3, 4]
 
@@ -21,7 +22,7 @@ var sensorData = (time = moment()) => {
       },
       ExpressionAttributeValues: {
         ":sensor": { N: "" + sensor },
-        ":ms": { N: "" + time.unix() }
+        ":ms": { N: "" + time.unix() * 1000 }
       },
       KeyConditionExpression: "sensor = :sensor AND #T <= :ms",
       TableName: "ff-tgs2602-voc",
