@@ -11,7 +11,7 @@ var sensorData = (time = moment()) => {
   // format used in database
   //if(!time) time = +new Date * 1000
   time = moment(time)
-  console.log(time.unix())
+  //console.log(time.unix())
 
   var sensors = [1, 2, 3, 4]
 
@@ -27,7 +27,7 @@ var sensorData = (time = moment()) => {
       KeyConditionExpression: "sensor = :sensor AND #T <= :ms",
       TableName: "ff-tgs2602-voc",
       ScanIndexForward: false,
-      Limit: 100
+      Limit: 500
     }
 
     return new Promise((resolve, reject) => {
