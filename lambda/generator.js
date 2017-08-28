@@ -11,7 +11,7 @@ class Generator {
     this.scale = 1024
 
     // Max wods in output phrase
-    this.maxWords = 10
+    this.maxWords = 20
 
     this.texts = require("ff-voc-texts").sync()
   }
@@ -50,7 +50,7 @@ class Generator {
     // Pick starting point based on input 1, and number of words
     // based on input 2
     let wordNdx = (Math.round(inputs[1] * text.length) + offset) % text.length
-    let numWords = Math.round(inputs[2] * that.maxWords)
+    let numWords = Math.round(inputs[2] * that.maxWords) + 5
 
     let words = text.slice(wordNdx, wordNdx + numWords + 1)
     let phrase = words.join("")

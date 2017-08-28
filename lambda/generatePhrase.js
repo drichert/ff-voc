@@ -5,9 +5,9 @@ var Generator = require("./generator")
 var gen = new Generator
 
 var fn = (event, context, cbk) => {
-  inputs = [11, 22, 33, 44]
+  inputs = [99, 22, 77, 300]
 
-  phrase = generator.generate(inputs)
+  phrase = gen.generate(inputs)
   console.log(phrase)
 
   cbk(null, phrase)
