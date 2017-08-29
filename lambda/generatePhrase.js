@@ -4,20 +4,6 @@ var db = new AWS.DynamoDB
 var Generator = require("./generator")
 var gen = new Generator
 
-//var fn = (event, context, cbk) => {
-//  inputs = [99, 22, 77, 300]
-//
-//  phrase = gen.generate(inputs)
-//  //console.log(phrase)
-//
-//  cbk(null, phrase)
-//}
-
-//module.exports = (event, context, cbk) => {
-//  setTimeout(fn.bind(this, event, context, cbk), 1000)
-//}
-
-//exports.handler = (event, context, cbk) => {
 module.exports = (event, context, cbk) => {
   //var getLatestPhraseTimestamp = () => {
   //  let params = {
@@ -47,15 +33,6 @@ module.exports = (event, context, cbk) => {
   //  })
   //}
 
-  var records = event.Records.map(r => {
-    return r
-  })
-
-  //var timestamps = event.Records.map(r => {
-  //  return r.dynamodb.Keys.timestamp.N
-  //})
-
-  //console.log("TIMESTAMPS", timestamps)
   var timestamp = event.Records[0].dynamodb.Keys.timestamp.N
 
   var getVal = (sensor) => {
@@ -77,16 +54,11 @@ module.exports = (event, context, cbk) => {
       db.query(params, (err, data) => {
         if(err) reject(err)
         else {
-          //console.log("GOT DATA", JSON.stringify(data))
           resolve(data.Items[0].value.N)
         }
       })
     })
   }
-
-  //var generate = values => {
-  //  gen.generate(inputs)
-  //}
 
   Promise.all([1, 2, 3, 4].map(getVal)).then((values) => {
     console.log("GOT VALUES", values)
