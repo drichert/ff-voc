@@ -1,28 +1,22 @@
-var el = document.getElementById("main");
-el.innerHTML = "";
+(function() {
+  var sock = new WebSocket("ws://68.37.47.14:8888")
 
-var socket = io("http://localhost:8888");
+  var el = document.getElementById("main");
+  var buffer = []
 
-//var count = 0;
+  sock.onmessage = function(msg) {
+    console.log(buffer.length);
+    var phrase = msg.data;
 
-//socket.on("text", function(data) {
-//  console.log("TEXT", data);
-//});
+    phrase = phrase.replace(/ /g, "&nbsp;");
+    phrase = phrase.replace("\n", "<br>");
+    phrase = phrase.replace("\t", "&nbsp;&nbsp;&nbsp;&nbps;&nbsp;");
 
-socket.on("phrase", function(phrase) {
-  //console.log("PHRASE", phrase);
-  el.insertAdjacentHTML("afterbegin", phrase);
+    buffer.push(phrase);
 
-  //if(el.innerHTML.length > 800) {
-  //  el.innertHTML = el.innerHTML.slice(0, 800);
-  //}
-});
-
-//var words = el.textContent.split(/(\s+)/)
-//
-//setInterval(function() {
-//  var word = words[Math.floor(Math.random() * words.length)];
-//  el.insertAdjacentHTML("afterbegin", word + " ");
-//
-//  el.innerHTML = el.innerHTML.slice(0, 800);
-//}, 180);
+    if(buffer.length > 20) { 
+      el.innerHTML = buffer.join(" ");
+      buffer = []
+    }
+  }
+})()
