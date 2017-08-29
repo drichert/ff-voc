@@ -1,19 +1,22 @@
+var WebSocket = require("ws")
+
 var AWS = require("aws-sdk")
 var db = new AWS.DynamoDB
 
 var Generator = require("./generator")
 var gen = new Generator
 
-module.exports = (event, context, cbk) => {
-  //var getLatestPhraseTimestamp = () => {
-  //  let params = {
-  //    AttributesToGet: [ "timestamp" ],
-  //    TableName: "phrase-test",
-  //    Key: ""
-  //  }
+var config = require("./config.json")
 
-  //  db.query(params)
-  //}
+module.exports = (event, context, cbk) => {
+  var broadcastPhrase = phrase => {
+    let sock = new WebSocket("ws://68.37.47.14:8888")
+
+    sock.on("open", () => {
+      sock.send(config.secret + "::::" + phrase)
+      sock.close()
+    })
+  }
 
   var putPhrase = (phrase) => {
     let params = {
@@ -66,7 +69,9 @@ module.exports = (event, context, cbk) => {
     let phrase = gen.generate(values)
     console.log("PHRASE", phrase)
 
-    putPhrase(phrase).then((phrase) => {
+    putPhrase(phrase).then(phrase => {
+      broadcastPhrase(phrase)
+
       console.log("PUT PHRASE", phrase)
       cbk(null, phrase)
     }, err => {
