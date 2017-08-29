@@ -1,0 +1,5 @@
+{
+  "_": "See server/phraseSocket.config.example.json",
+
+  "secret": "abc123"
+}
