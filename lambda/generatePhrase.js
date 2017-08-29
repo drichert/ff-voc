@@ -4,14 +4,14 @@ var db = new AWS.DynamoDB
 var Generator = require("./generator")
 var gen = new Generator
 
-var fn = (event, context, cbk) => {
-  inputs = [99, 22, 77, 300]
-
-  phrase = gen.generate(inputs)
-  //console.log(phrase)
-
-  cbk(null, phrase)
-}
+//var fn = (event, context, cbk) => {
+//  inputs = [99, 22, 77, 300]
+//
+//  phrase = gen.generate(inputs)
+//  //console.log(phrase)
+//
+//  cbk(null, phrase)
+//}
 
 //module.exports = (event, context, cbk) => {
 //  setTimeout(fn.bind(this, event, context, cbk), 1000)
@@ -88,10 +88,13 @@ module.exports = (event, context, cbk) => {
   //  gen.generate(inputs)
   //}
 
-  Promise.all([1, 2, 3, 4].map(getVal)).then((data) => {
-    console.log("GOT DATA", data)
+  Promise.all([1, 2, 3, 4].map(getVal)).then((values) => {
+    console.log("GOT VALUES", values)
 
-    cbk(null, data)
+    let phrase = gen.generate(values)
+    console.log("PHRASE", phrase)
+
+    cbk(null, values)
   }, (err) => {
     console.log("ERR", err)
     cbk(err)
