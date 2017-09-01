@@ -1,22 +1,15 @@
 var AWS = require("aws-sdk")
 
 var config = require("./config.json")
-console.log(config)
 var db = new AWS.DynamoDB(config)
 
 // sensor - sensor number (1-4)
 // startTime - timestamp (seconds)
 // endTime - timestamp (seconds)
 var sensorData = (sensor, startTime, endTime) => {
-  //console.log("start", startTime, "end", endTime)
   let results = []
 
   var query = (lastEvaluatedKey, cbk) => {
-    if(typeof(arguments[0]) === "function") {
-      lastEvaluatedKey = null
-      cbk = arguments[0]
-    }
-
     let params = {
       ExpressionAttributeNames: {
         "#T": "timestamp"
@@ -31,13 +24,13 @@ var sensorData = (sensor, startTime, endTime) => {
       TableName: "ff-tgs2602-voc"
     }
 
-    if(lastEvaluatedKey && typeof(lastEvaluatedKey) !== "function") {
-      console.log(lastEvaluatedKey)
+    if(lastEvaluatedKey) {
       params.ExclusiveStartKey = lastEvaluatedKey
     }
 
     db.query(params, (err, data) => {
-      console.log(err)
+      setTimeout(()=>{}, 333)
+
       let values = data.Items.map(item => {
         return {
           sensor: item.sensor.N,
@@ -46,18 +39,18 @@ var sensorData = (sensor, startTime, endTime) => {
         }
       })
 
-      results.concat(values)
+      results = results.concat(values)
 
       if(data.LastEvaluatedKey) {
         query(data.LastEvaluatedKey, cbk)
       } else {
-        cbk(err, results)
+        return cbk(err, results)
       }
     })
   }
 
   return new Promise((resolve, reject) => {
-    query((err, results) => {
+    query(null, (err, results) => {
       if(err) reject(err)
       else resolve(results)
     })
