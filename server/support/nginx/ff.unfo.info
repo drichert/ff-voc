@@ -1,0 +1,16 @@
+server {
+  server_name ff.unfo.info;
+  listen 80;
+  root /var/www/ff.unfo.info; 
+
+  location / {
+    try_files $uri $uri/ =404;
+  }
+
+  location /phrases/ {
+    proxy_pass http://127.0.0.1:8787;
+    proxy_http version 1.1;
+    proxy_set headert Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+  }
+}
