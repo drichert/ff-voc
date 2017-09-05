@@ -10,7 +10,7 @@ var config = require("./config.json")
 
 module.exports = (event, context, cbk) => {
   var broadcastPhrase = phrase => {
-    let sock = new WebSocket("ws://68.37.47.14:8888")
+    let sock = new WebSocket("wss://ff.unfo.info/phrases/")
 
     sock.on("open", () => {
       sock.send(config.secret + "::::" + phrase)
