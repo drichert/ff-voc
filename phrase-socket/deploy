@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Copy config.json to /var/app manually
+
+scp {phraseSocket.js,package.json} ff.unfo.info:/var/app/
+ssh ff.unfo.info "cd /var/app && sudo npm install"

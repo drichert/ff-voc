@@ -1,7 +1,18 @@
 server {
   server_name ff.unfo.info;
   listen 80;
+  listen 443 ssl;
+
+  ssl_certificate /etc/ff/ssl/ff.unfo.info_chained.crt;
+  ssl_certificate_key /etc/ff/ssl/ff.unfo.info.key;
+
+  # Redirect non-SSL to SSL
+  if ($ssl_protocol = "") {
+    rewrite ^ https://$host$request_uri? permanent;
+  }
+
   root /var/www/ff.unfo.info; 
+  index index.html;
 
   location / {
     try_files $uri $uri/ =404;
@@ -9,8 +20,8 @@ server {
 
   location /phrases/ {
     proxy_pass http://127.0.0.1:8787;
-    proxy_http version 1.1;
-    proxy_set headert Upgrade $http_upgrade;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade websocket;
     proxy_set_header Connection "upgrade";
   }
 }
