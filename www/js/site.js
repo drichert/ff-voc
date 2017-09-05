@@ -1,8 +1,14 @@
-(function() {
-  var sock = new WebSocket("ws://68.37.47.14:8888")
+var $FF = {};
 
+(function() {
+  var sockUrl = "wss://ff.unfo.info/phrases/";
+  var sock = new ReconnectingWebSocket(sockUrl, null, {
+    maxReconnectAttempts: 5
+  });
+
+  $FF.sock = sock;
   var el = document.getElementById("main");
-  var buffer = []
+  var buffer = [];
 
   sock.onmessage = function(msg) {
     console.log(buffer.length);
@@ -14,9 +20,9 @@
 
     buffer.push(phrase);
 
-    if(buffer.length > 20) { 
+    if(buffer.length > 20) {
       el.innerHTML = buffer.join(" ");
-      buffer = []
+      buffer = [];
     }
-  }
-})()
+  };
+})();
