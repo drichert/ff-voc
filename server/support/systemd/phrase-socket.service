@@ -1,0 +1,14 @@
+[Unit]
+Description=phrase-socket
+After=network.target
+
+[Service]
+WorkingDirectory=/var/app
+Type=simple
+ExecStart=node phraseSocket 8787
+Restart=always
+StandardOutput=journal+console
+
+[Install]
+WantedBy=multi-user.target
+
