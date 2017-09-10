@@ -55,15 +55,16 @@ module.exports = (event, context, cbk) => {
 
     return new Promise((resolve, reject) => {
       db.query(params, (err, data) => {
-        if(err) reject(err)
+        //console.log("SENSOR, DATA, ERR", sensor, JSON.stringify(data), JSON.stringify(err))
+        if(err) return reject(err)
         else {
-          resolve(data.Items[0].value.N)
+          return resolve(data.Items[0].value.N)
         }
       })
     })
   }
 
-  Promise.all([1, 2, 3, 4].map(getVal)).then(values => {
+  return Promise.all([1, 2, 3, 4].map(getVal)).then(values => {
     console.log("GOT VALUES", values)
 
     let phrase = gen.generate(values)
