@@ -76,7 +76,7 @@ module.exports = (event, context, cbk) => {
   return Promise.all([1, 2, 3, 4].map(getVal)).then(values => {
     console.log("GOT VALUES", values)
 
-    values = applyOffset(values, 1000)
+    values = applyOffset(values, 100)
     console.log("OFFSET VALUES", values)
 
     let phrase = gen.generate(values)
