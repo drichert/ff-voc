@@ -67,8 +67,17 @@ module.exports = (event, context, cbk) => {
     })
   }
 
+  var applyOffset = (values, offset) => {
+    return values.map(v => {
+      return parseInt(v) + offset
+    })
+  }
+
   return Promise.all([1, 2, 3, 4].map(getVal)).then(values => {
     console.log("GOT VALUES", values)
+
+    values = applyOffset(values, 1000)
+    console.log("OFFSET VALUES", values)
 
     let phrase = gen.generate(values)
     console.log("PHRASE", phrase)

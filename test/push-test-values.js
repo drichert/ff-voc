@@ -24,7 +24,7 @@ setInterval(() => {
   // Randomize test values
   let values = [1, 2, 3, 4].map(n => {
     //return Math.floor(Math.random() * 1024)
-    return Math.floor(Math.random() * 10) + 20
+    return Math.floor(Math.random() * 10) + (20 * n)
   })
 
   console.log("TIMESTAMP", timestamp)
