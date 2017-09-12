@@ -58,7 +58,10 @@ module.exports = (event, context, cbk) => {
         //console.log("SENSOR, DATA, ERR", sensor, JSON.stringify(data), JSON.stringify(err))
         if(err) return reject(err)
         else {
-          return resolve(data.Items[0].value.N)
+          let val = data.Items[0]
+          val = val ? val.value.N : 0
+
+          return resolve(val)
         }
       })
     })
