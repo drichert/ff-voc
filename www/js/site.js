@@ -9,9 +9,11 @@ var $FF = {};
   $FF.sock = sock;
   var el = document.getElementById("main");
   var buffer = [];
+  var limit = 20;
 
   sock.onmessage = function(msg) {
-    console.log(buffer.length);
+    console.log("buffer length: " + (buffer.length + 1));
+
     var phrase = msg.data;
 
     phrase = phrase.replace(/ /g, "&nbsp;");
@@ -20,7 +22,10 @@ var $FF = {};
 
     buffer.push(phrase);
 
-    if(buffer.length > 20) {
+    var loadingMsg = document.querySelector(".loading");
+    if(loadingMsg) loadingMsg.textContent = ".".repeat(buffer.length);
+
+    if(buffer.length > limit) {
       el.innerHTML = buffer.join(" ");
       buffer = [];
     }
