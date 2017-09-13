@@ -48,7 +48,7 @@ module.exports = (event, context, cbk) => {
         ":ms": { N: "" + timestamp }
       },
       KeyConditionExpression: "sensor = :sensor AND #T = :ms",
-      TableName: "sensor-test-3",
+      TableName: "ff-tgs2602-voc",
       ScanIndexForward: false,
       Limit: 1
     }
