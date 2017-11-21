@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "aws-sdk": "^2.149.0"
+    "aws-sdk": "^2.149.0",
+    "yargs": "^10.0.3"
   }
 }
