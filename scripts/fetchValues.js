@@ -1,15 +1,27 @@
-const TIMEOUT = process.env["TIMEOUT"] || 4000
-const QUERY_LIMIT = 10000
+const TIMEOUT = process.env["TIMEOUT"] || 10000
+const QUERY_LIMIT = 1000
 
-var fs = require("fs")
-var moment = require("moment-timezone")
-var AWS = require("aws-sdk")
-var config = require("./config.json")
+const fs = require("fs")
+const AWS = require("aws-sdk")
+const config = require("./config.json")
+const argv = require("yargs").argv
 
-//GET ARGS
-//var m = moment("2017-10-27 00:00")
-//var start = m.startOf("day").valueOf()
-//var end = m.endOf("day").valueOf()
+const timestamps = () => {
+  if(!argv.day) {
+    console.log("Missing --day")
+    process.exit(1)
+  } else var day = argv.day
+
+  let d = new Date(day)
+
+  d.setHours(0, 0, 0, 0)
+  let start = d.valueOf()
+
+  d.setHours(23, 59, 59, 999)
+  let end = d.valueOf()
+
+  return { start: start, end: end }
+}
 
 var db = new AWS.DynamoDB({
   region: config.region,
@@ -19,7 +31,7 @@ var db = new AWS.DynamoDB({
 
 var collection = [];
 
-var queryValues = (sensor, startMs, endMs, startKey = null) => {
+var queryValues = (sensor, startMs, endMs, startKey, cbk) => {
   if([1, 2, 3, 4].indexOf(sensor) < 0) throw "Bad sensor number"
 
   let params = {
@@ -33,15 +45,17 @@ var queryValues = (sensor, startMs, endMs, startKey = null) => {
       ":endMs": { N: "" + endMs }
     },
     KeyConditionExpression:
-      "sensor = :ssensor AND #T BETWEEN :startMs AND :endMs",
+      "sensor = :sensor AND #T BETWEEN :startMs AND :endMs",
     Limit: QUERY_LIMIT
   }
 
   if(startKey) params.ExclusiveStartKey = startKey
 
+  process.stderr.write("querying...\n")
+
   db.query(params, (err, data) => {
     setTimeout(() => {
-      if(err) console.log(err, err.stack)
+      if(err) return cbk(err)
       else {
         data.Items.forEach(item => {
           collection.push({
@@ -52,19 +66,23 @@ var queryValues = (sensor, startMs, endMs, startKey = null) => {
         })
 
         if(data.LastEvaluatedKey) {
-          //process.stderr.write(JSON.stringify(data.LastEvaluatedKey) + "\n")
+          process.stderr.write(
+            "LastEvaluatedKey: " +
+            JSON.stringify(data.LastEvaluatedKey)
+            + "\n")
 
           return queryValues(sensor, startMs, endMs, data.LastEvaluatedKey)
         } else {
-          fs.writeFileSync("phrases.json", JSON.stringify(collection))
+          return cbk(null, collection)
         }
       }
     }, TIMEOUT)
   })
 }
 
-queryValues().then(data => {
-  console.log(data)
-}, err => {
-  console.log("ERROR! " + err)
+var t = timestamps()
+
+queryValues(1, t.start, t.end, null, (err, data) => {
+  if(err) process.stderr.write("ERROR! " + err + "\n")
+  else console.log(JSON.stringify(data))
 })
