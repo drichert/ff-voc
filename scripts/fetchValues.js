@@ -1,16 +1,23 @@
-const TIMEOUT = process.env["TIMEOUT"] || 10000
-const QUERY_LIMIT = 1000
+const TIMEOUT = process.env["TIMEOUT"] || 5000
+const QUERY_LIMIT = 2000
 
 const fs = require("fs")
+const async = require("async")
 const AWS = require("aws-sdk")
 const config = require("./config.json")
 const argv = require("yargs").argv
 
+// stderr logger
+const _e = msg => process.stderr.write(`${msg}\n`)
+
 const timestamps = () => {
+  var day;
+
+  // --day YYYY-MM-DD
   if(!argv.day) {
     console.log("Missing --day")
     process.exit(1)
-  } else var day = argv.day
+  } else day = argv.day
 
   let d = new Date(day)
 
@@ -22,6 +29,10 @@ const timestamps = () => {
 
   return { start: start, end: end }
 }
+
+// --json-path /path/to/output.json
+var jsonPath = argv.jsonPath
+_e(`Output JSON path: ${jsonPath}`)
 
 var db = new AWS.DynamoDB({
   region: config.region,
@@ -51,9 +62,9 @@ var queryValues = (sensor, startMs, endMs, startKey, cbk) => {
 
   if(startKey) params.ExclusiveStartKey = startKey
 
-  process.stderr.write("querying...\n")
+  _e("querying...")
 
-  db.query(params, (err, data) => {
+  return db.query(params, (err, data) => {
     setTimeout(() => {
       if(err) return cbk(err)
       else {
@@ -65,14 +76,17 @@ var queryValues = (sensor, startMs, endMs, startKey, cbk) => {
           })
         })
 
-        if(data.LastEvaluatedKey) {
-          process.stderr.write(
-            "LastEvaluatedKey: " +
-            JSON.stringify(data.LastEvaluatedKey)
-            + "\n")
+        _e(`collection size: ${collection.length}`)
 
-          return queryValues(sensor, startMs, endMs, data.LastEvaluatedKey)
+        if(data.LastEvaluatedKey) {
+          let lastKey = data.LastEvaluatedKey
+
+          _e(`LastEvaluatedKey: ${JSON.stringify(lastKey)}`)
+
+          return queryValues(sensor, startMs, endMs, lastKey, cbk)
         } else {
+          _e(`Finished fetching values for sensor ${sensor}`)
+
           return cbk(null, collection)
         }
       }
@@ -82,7 +96,17 @@ var queryValues = (sensor, startMs, endMs, startKey, cbk) => {
 
 var t = timestamps()
 
-queryValues(1, t.start, t.end, null, (err, data) => {
-  if(err) process.stderr.write("ERROR! " + err + "\n")
-  else console.log(JSON.stringify(data))
+async.concatSeries([1, 2, 3, 4], (sensor, cbk) => {
+  queryValues(sensor, t.start, t.end, null, (err, data) => {
+    if(err) return cbk(err)
+    else return cbk(null, data)
+  })
+}, (err, data) => {
+  if(err) return _e(`ERROR: ${err}`)
+  else {
+    var json = JSON.stringify(data)
+
+    if(jsonPath) return fs.writeFileSync(jsonPath, json)
+    else return console.log(json)
+  }
 })
