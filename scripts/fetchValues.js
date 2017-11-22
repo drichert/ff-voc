@@ -87,7 +87,11 @@ var queryValues = (sensor, startMs, endMs, startKey, cbk) => {
         } else {
           _e(`Finished fetching values for sensor ${sensor}`)
 
-          return cbk(null, collection)
+          // copy and reset the collection
+          collCopy = JSON.parse(JSON.stringify(collection))
+          collection = []
+
+          return cbk(null, collCopy)
         }
       }
     }, TIMEOUT)
