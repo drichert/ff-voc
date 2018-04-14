@@ -2,4 +2,4 @@
 
 # Copy config.json to /var/app manually
 
-scp -r {index.html,js,css} ff.unfo.info:/var/www/ff.unfo.info/
+scp -r {*.html,js,css} ff.unfo.info:/var/www/ff.unfo.info/
