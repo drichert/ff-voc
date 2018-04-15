@@ -57,7 +57,7 @@ class TextLoader {
 
   prepareText() {
     this.text = this.text
-      .replace(/ /g, "&nbsp;")
+      .replace(/  /g, " &nbsp;")
       //.replace("\n", "<br>")
       .replace("\t", "&nbsp;&nbsp;&nbsp;&nbps;&nbsp;")
   }
