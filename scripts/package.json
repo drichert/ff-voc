@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "async": "^2.6.0",
+    "aws-sdk": "^2.149.0",
+    "yargs": "^10.0.3",
+    "glob": "^7.1.2",
+    "ff-dk-texts": "file:/home/drichert/proj/ff-dk-texts"
+  }
+}

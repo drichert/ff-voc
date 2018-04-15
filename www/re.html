@@ -1,7 +1,6 @@
 <!doctype html>
+<html>
 <head>
-  <meta http-equiv="refresh" content="url=https://ff.unfo.info/re.html" />
-
   <title>ff</title>
 
   <link href="https://fonts.googleapis.com/css?family=Old+Standard+TT" rel="stylesheet">
@@ -25,6 +24,7 @@
 
       text-align: justify;
       overflow: hidden;
+      /* word-break: break-all; */
     }
   </style>
 
@@ -43,5 +43,11 @@
     loading<span class="loading"></span>
   </div>
 
-  <script src="js/reconnecting-websocket.min.js"></script>
-  <script src="js/site.js"></script>
+  <script src="/js/replay.js"></script>
+  <script>
+    var $tl = new TextLoader()
+
+    $tl.run(function(err, data) {
+      document.querySelector(".content-block").innerHTML = data
+    })
+  </script>
